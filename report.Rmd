@@ -233,5 +233,20 @@ this plot.
 ```{r boxplot from long format data using ggplot2, echo=FALSE}
 library(ggplot2)
 
+long_format_data <- long_format_data |> 
+  # Arrange the long tibble to get 'good' and 'bad' separation
+  arrange(desc(gene_set)) |> 
+  
+  # Convert the HGNC ID column to a factor with no duplicates, to preserve this
+  # order for plotting
+  mutate(hgnc = factor(hgnc, levels = unique(hgnc)))
 
+ggplot(long_format_data, aes(x = hgnc, y = value, fill = gene_set)) +
+  geom_boxplot() +
+  labs(
+    x = "Gene Set",
+    y = "Expression Value"
+  ) +
+  # Flip the HGNC symbols vertical for readability
+  theme(axis.text.x = element_text(angle = -90))
 ```
